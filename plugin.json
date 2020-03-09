@@ -1,0 +1,9 @@
+{
+    "name": "Interactive Python Shell",
+    "id" : "PythonShellPlugin",
+    "author": "Brady Adams",
+    "version": "0.1.0",
+    "description": "Provides an interactive Python shell in Cura.",
+    "supported_sdk_versions": ["7.0.0", "6.3.0"],
+    "i18n-catalog": "python-shell"
+}
