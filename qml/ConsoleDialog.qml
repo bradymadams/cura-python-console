@@ -8,8 +8,8 @@ import QtQuick.Window 2.2
 import UM 1.2 as UM
 
 UM.Dialog {
-    id: shellDialog
-    title: "Ultimaker Cura | Python Shell"
+    id: consoleDialog
+    title: "Ultimaker Cura | Python Console"
 
     width: Math.floor(screenScaleFactor * 480)
     height: Math.floor(screenScaleFactor * 640)
@@ -18,17 +18,17 @@ UM.Dialog {
     minimumHeight: Math.floor(screenScaleFactor * 480)
 
     ColumnLayout {
-        UM.I18nCatalog{id: catalog; name: "python-shell"}
+        UM.I18nCatalog{id: catalog; name: "python-console"}
         anchors.fill: parent
         anchors.margins: UM.Theme.getSize("default_margin").width
 
         spacing: UM.Theme.getSize("default_margin").height
-        
+
         Button {
             Layout.alignment: Qt.AlignRight | Qt.AlignBottom
 
             text: catalog.i18nc("@action:button", "Close")
-            onClicked: shellDialog.close()
+            onClicked: consoleDialog.close()
         }
     }
 }

@@ -9,7 +9,7 @@ import UM 1.2 as UM
 
 UM.Dialog {
     id: aboutDialog
-    title: "Interactive Python Shell Plugin"
+    title: "Interactive Python Console Plugin"
 
     width: Math.floor(screenScaleFactor * 400);
     minimumWidth: width;
@@ -20,7 +20,7 @@ UM.Dialog {
     maximumHeight: height;
 
     ColumnLayout {
-        UM.I18nCatalog{id: catalog; name: "python-shell"}
+        UM.I18nCatalog{id: catalog; name: "python-console"}
         anchors.fill: parent
         anchors.margins: UM.Theme.getSize("default_margin").width
 
@@ -30,7 +30,6 @@ UM.Dialog {
             Layout.alignment: Qt.AlignCenter
             /*Image {
                 width: Math.floor(screenScaleFactor * 300);
-                
                 fillMode: Image.PreserveAspectFit
                 source: "images/branding.png"
                 mipmap: true
@@ -39,7 +38,7 @@ UM.Dialog {
 
         Text {
             Layout.alignment: Qt.AlignCenter
-            
+
             //font: UM.Theme.getFont("default")
             font.underline: true
             color: "#0000ff"
@@ -53,16 +52,16 @@ UM.Dialog {
                 onClicked: Qt.openUrlExternally("https://github.com")
             }
         }
-        
+
         Text {
             Layout.alignment: Qt.AlignCenter
-            
+
             font: UM.Theme.getFont("default")
             color: UM.Theme.getColor("text")
-            
+
             text: catalog.i18nc("@text", "")
         }
-        
+
         Button {
             Layout.alignment: Qt.AlignCenter
 

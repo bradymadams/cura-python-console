@@ -13,14 +13,14 @@ from UM.PluginRegistry import PluginRegistry
 
 from cura.CuraApplication import CuraApplication
 
-i18n_catalog = i18nCatalog("python-shell")
+i18n_catalog = i18nCatalog("python-console")
 
-class ShellExtension(Extension):
+class ConsoleExtension(Extension):
     def __init__(self):
         super().__init__()
 
-        self._shell_window = None
-        self.addMenuItem(i18n_catalog.i18nc("@item:inmenu", "Open in New Window"), self._openShellDialog)
+        self._console_window = None
+        self.addMenuItem(i18n_catalog.i18nc("@item:inmenu", "Open in New Window"), self._openConsoleDialog)
 
         # About Dialog
         self._about_dialog = None
@@ -43,7 +43,7 @@ class ShellExtension(Extension):
         if not self._about_dialog:
             self._about_dialog.close()
 
-    def _openShellDialog(self):
-        if not self._shell_window:
-            self._shell_window = self._createQmlDialog("ShellDialog.qml")
-        self._shell_window.show()
+    def _openConsoleDialog(self):
+        if not self._console_window:
+            self._console_window = self._createQmlDialog("ConsoleDialog.qml")
+        self._console_window.show()
