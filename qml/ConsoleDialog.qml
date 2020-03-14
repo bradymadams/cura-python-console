@@ -7,9 +7,14 @@ import QtQuick.Window 2.2
 
 import UM 1.2 as UM
 
+import PythonConsole 1.0 as PythonConsole
+
 UM.Dialog {
     id: consoleDialog
     title: "Ultimaker Cura | Python Console"
+
+    modality: Qt.NonModal;
+    flags: Qt.Window;
 
     width: Math.floor(screenScaleFactor * 480)
     height: Math.floor(screenScaleFactor * 640)
@@ -24,7 +29,13 @@ UM.Dialog {
 
         spacing: UM.Theme.getSize("default_margin").height
 
+        PythonConsole.Shell {
+            anchors.fill: parent
+            anchors.bottomMargin: closeButton.height + UM.Theme.getSize("default_margin").height
+        }
+
         Button {
+            id: closeButton
             Layout.alignment: Qt.AlignRight | Qt.AlignBottom
 
             text: catalog.i18nc("@action:button", "Close")
