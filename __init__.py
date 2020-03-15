@@ -1,9 +1,3 @@
-import os
-import sys
-
-from PyQt5.QtCore import QUrl
-from PyQt5.QtQml import qmlRegisterType, QQmlEngine, QQmlComponent
-
 from UM.i18n import i18nCatalog
 from UM.Logger import Logger
 

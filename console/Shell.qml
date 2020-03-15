@@ -12,6 +12,10 @@ TextArea {
 
     text: shell.text
 
+    style: TextAreaStyle {
+        font.family: "Monospace"
+    }
+
     Keys.onPressed: {
         event.accepted = shell.keyPressed(event.key, event.modifiers, event.text);
         cursorPosition = 0
