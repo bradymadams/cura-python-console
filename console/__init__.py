@@ -168,6 +168,12 @@ class ShellInterface(QObject):
                 # Do nothing when Alt is held down
                 return True
 
+            if ctrl:
+                # Do nothing for now, but we need to check
+                # for arrows and certain characters (e.g. V)
+                # that we want to do stuff with
+                return True
+
             if shift and ctrl:
                 # Do nothing when Ctrl + Shift held down
                 # TODO implement keyboard selection

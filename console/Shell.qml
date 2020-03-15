@@ -13,7 +13,6 @@ TextArea {
     text: shell.text
 
     Keys.onPressed: {
-        //console.log(event.key);
         event.accepted = shell.keyPressed(event.key, event.modifiers, event.text);
         cursorPosition = 0
         text = shell.text
