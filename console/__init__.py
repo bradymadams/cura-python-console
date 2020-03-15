@@ -54,7 +54,7 @@ class CodeLine:
 
 class CodeHistory:
     def __init__(self, prompt):
-        self.max_lines = 100
+        self.maxLines = 100
 
         self._prompt = prompt
         self._lines = [] # List[CodeLine]
@@ -70,7 +70,8 @@ class CodeHistory:
         self._cacheLength = sum( (l.length() + promptLength) for l in self._lines )
 
     def add(self, line : CodeLine):
-        # TODO check if max is hit and if so, pop last line
+        if self.lineCount() >= self.maxLines:
+            self._lines.pop()
         line.active = False
         self._lines.insert(0, line)
         self._update()
