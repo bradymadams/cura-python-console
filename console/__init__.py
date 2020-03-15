@@ -5,6 +5,7 @@ import os
 import code
 import codeop
 import io
+import threading
 
 from PyQt5.Qt import Qt, QKeySequence
 from PyQt5.QtCore import pyqtProperty, pyqtSlot, QUrl, QObject
@@ -114,8 +115,8 @@ class ShellInterface(QObject):
             Qt.Key_Right: self._keyArrowRight,
             Qt.Key_Down: self._keyArrowDown,
             Qt.Key_Up: self._keyArrowUp,
-            Qt.Key_Enter: self._newLine,
-            Qt.Key_Return: self._newLine
+            Qt.Key_Enter: self._runCode,
+            Qt.Key_Return: self._runCode
         }
 
     @pyqtProperty(str)
@@ -190,12 +191,14 @@ class ShellInterface(QObject):
         if back:
             self._cursor -= 1
 
-    def _newLine(self):
+    def _runCode(self):
         _stdout = sys.stdout
         _stderr = sys.stderr
+        _excepthook = sys.excepthook
 
         sstdout = sys.stdout = io.StringIO()
         sstderr = sys.stderr = io.StringIO()
+        sys.excepthook = sys.__excepthook__
 
         try:
             code = self._compiler(self._currentLine.code)
@@ -206,6 +209,7 @@ class ShellInterface(QObject):
 
         sys.stdout = _stdout
         sys.stderr = _stderr
+        sys.excepthook = _excepthook
 
         self._currentLine.output = \
             sstdout.getvalue().splitlines() + \
