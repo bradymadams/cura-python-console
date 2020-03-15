@@ -1,7 +1,10 @@
 from typing import List, Optional
 
+import sys
 import os
 import code
+import codeop
+import io
 
 from PyQt5.Qt import Qt, QKeySequence
 from PyQt5.QtCore import pyqtProperty, pyqtSlot, QUrl, QObject
@@ -36,7 +39,9 @@ class CodeLine:
             self.code = self.code[0:index-1] + self.code[index:]
 
     def length(self):
-        return len(self.code) + sum([len(o) for o in self.output])
+        if self.active:
+            return len(self.code)
+        return len(self.code) + 1 + sum([len(o) + 1 for o in self.output])
 
     def text(self, prompt):
         t = prompt + self.code
@@ -61,11 +66,12 @@ class CodeHistory:
 
     def _update(self):
         promptLength = len(self._prompt)
-        self._cacheText = ''.join( [l.text(self._prompt) + '\n' for l in reversed(self._lines)] )
-        self._cacheLength = sum( (l.length() + promptLength + 1) for l in self._lines )
+        self._cacheText = ''.join( [l.text(self._prompt) for l in reversed(self._lines)] )
+        self._cacheLength = sum( (l.length() + promptLength) for l in self._lines )
 
     def add(self, line : CodeLine):
         # TODO check if max is hit and if so, pop last line
+        line.active = False
         self._lines.insert(0, line)
         self._update()
 
@@ -83,6 +89,9 @@ class CodeHistory:
 class ShellInterface(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self._interpreter = code.InteractiveInterpreter()
+        self._compiler = codeop.CommandCompiler()
 
         self._prompt = ">>> "
         self._promptLength = len(self._prompt)
@@ -182,7 +191,26 @@ class ShellInterface(QObject):
             self._cursor -= 1
 
     def _newLine(self):
-        # TODO execute
+        _stdout = sys.stdout
+        _stderr = sys.stderr
+
+        sstdout = sys.stdout = io.StringIO()
+        sstderr = sys.stderr = io.StringIO()
+
+        try:
+            code = self._compiler(self._currentLine.code)
+        except (OverflowError, SyntaxError, ValueError):
+            self._interpreter.showsyntaxerror()
+        else:
+            self._interpreter.runcode(code)
+
+        sys.stdout = _stdout
+        sys.stderr = _stderr
+
+        self._currentLine.output = \
+            sstdout.getvalue().splitlines() + \
+            sstderr.getvalue().splitlines()
+
         self._history.add(self._currentLine)
         self._currentLine = CodeLine()
         self._cursor = 0
