@@ -58,7 +58,6 @@ class CodeHistory:
 
         self._prompt = prompt
         self._lines = [] # List[CodeLine]
-        self._selected = -1
 
         self._cacheText = ''
         self._cacheLength = 0
@@ -82,10 +81,16 @@ class CodeHistory:
     def text(self, prompt):
         return self._cacheText
 
-    def selected(self) -> Optional[CodeLine]:
-        if self._selected:
-            return self._lines[self._selected]
-        return None
+    def lineCount(self) -> int:
+        return len(self._lines)
+
+    def getLine(self, index) -> Optional[CodeLine]:
+        '''
+        Retrieve a CodeLine in the history. 0 is the most recent
+        '''
+        if index > len(self._lines):
+            return None
+        return self._lines[index]
 
 class ShellInterface(QObject):
     def __init__(self, parent=None):
@@ -102,7 +107,7 @@ class ShellInterface(QObject):
         self._currentLine = CodeLine()
         self._cursor = 0
 
-        self._historyLine = None
+        self._historyLine = -1
 
         # keys to ignore and allow something else to handle
         # currently, we don't have any, so this may be removed
@@ -218,10 +223,7 @@ class ShellInterface(QObject):
         self._history.add(self._currentLine)
         self._currentLine = CodeLine()
         self._cursor = 0
-
-    def _navigate(self, increment : int):
-        pass
-        # TODO
+        self._historyLine = -1
 
     def _keyHome(self):
         self._cursor = 0
@@ -241,12 +243,23 @@ class ShellInterface(QObject):
             self._cursor += 1
 
     def _keyArrowDown(self):
-        if self._historyLine:
-            self._navigate(1)
-        # TODO move cursor to EOL
+        self._navigateHistory(-1)
 
     def _keyArrowUp(self):
-        self._navigate(-1)
+        self._navigateHistory(1)
+
+    def _navigateHistory(self, increment : int):
+        self._historyLine += increment
+        self._historyLine = max(self._historyLine, -1)
+        self._historyLine = min(self._historyLine, self._history.lineCount() - 1)
+        if self._historyLine == -1:
+            self._currentLine.code = ''
+            self._cursor = 0
+        else:
+            line = self._history.getLine(self._historyLine)
+            if line:
+                self._currentLine.code = line.code
+                self._keyEnd()
 
 def registerQmlTypes():
     directory = os.path.dirname(os.path.abspath(__file__))
