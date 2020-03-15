@@ -7,11 +7,9 @@ import codeop
 import io
 import threading
 
-from PyQt5.Qt import Qt, QKeySequence
+from PyQt5.Qt import Qt
 from PyQt5.QtCore import pyqtProperty, pyqtSlot, QUrl, QObject
-from PyQt5.QtQml import qmlRegisterSingletonType, qmlRegisterType
-from PyQt5.QtQml import QQmlContext
-from PyQt5.QtQml import QQmlComponent
+from PyQt5.QtQml import qmlRegisterType
 
 class CodeLine:
     def __init__(self, code : str = None):
@@ -58,6 +56,7 @@ class CodeHistory:
 
         self._prompt = prompt
         self._lines = [] # List[CodeLine]
+        self._nonEmptyLines = [] # List[CodeLine]
 
         self._cacheText = ''
         self._cacheLength = 0
@@ -70,10 +69,22 @@ class CodeHistory:
         self._cacheLength = sum( (l.length() + promptLength) for l in self._lines )
 
     def add(self, line : CodeLine):
-        if self.lineCount() >= self.maxLines:
-            self._lines.pop()
+        if self.allLineCount() >= self.maxLines:
+            rmline = self._lines.pop()
+
+            # If the removed line is a non-empty line, need to remove
+            # it in _nonEmptyLines as well
+            if self.lineCount() > 0 and self._nonEmptyLines[-1] is rmline:
+                self._nonEmptyLines.pop()
+
+        # line is no longer active since it's being added to the history
         line.active = False
         self._lines.insert(0, line)
+
+        # add it to _nonEmptyLines if it has code
+        if len(line.code.strip()) > 0:
+            self._nonEmptyLines.insert(0, line)
+
         self._update()
 
     def length(self):
@@ -83,15 +94,18 @@ class CodeHistory:
         return self._cacheText
 
     def lineCount(self) -> int:
+        return len(self._nonEmptyLines)
+
+    def allLineCount(self) -> int:
         return len(self._lines)
 
     def getLine(self, index) -> Optional[CodeLine]:
         '''
         Retrieve a CodeLine in the history. 0 is the most recent
         '''
-        if index > len(self._lines):
+        if index > len(self._nonEmptyLines):
             return None
-        return self._lines[index]
+        return self._nonEmptyLines[index]
 
 class ShellInterface(QObject):
     def __init__(self, parent=None):
