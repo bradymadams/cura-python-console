@@ -9,28 +9,14 @@ from UM.Logger import Logger
 
 i18n_catalog = i18nCatalog("python-console")
 
+from . import console
 from . import ConsoleExtension
 
 def getMetaData():
     return {}
 
-
 def register(app):
-    directory = os.path.dirname(os.path.abspath(__file__))
-
-    qmlRegisterType(
-        ConsoleExtension.ShellInterface,
-        "PythonConsole",
-        1, 0,
-        "ShellInterface"
-    )
-
-    qmlRegisterType(
-        QUrl.fromLocalFile(os.path.join(directory, "qml", "Shell.qml")),
-        "PythonConsole",
-        1, 0,
-        "Shell"
-    )
+    console.registerQmlTypes()
 
     return {
         "extension": ConsoleExtension.ConsoleExtension(),
