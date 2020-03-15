@@ -153,6 +153,18 @@ class ShellInterface(QObject):
     def cursorPosition(self):
         return self._history.length() + self._promptLength + self._cursor
 
+    @pyqtSlot(str, result=bool)
+    def runScript(self, scriptPath):
+        if len(scriptPath) == 0:
+            return True
+        if os.path.exists(scriptPath):
+            with open(scriptPath, 'r') as fpy:
+                lines = fpy.readlines()
+            for line in lines:
+                self._interpreter.runsource(line)
+            return True
+        return False
+
     @pyqtSlot(int, int, str, result=bool)
     def keyPressed(self, key, modifiers, text):
         alt = False

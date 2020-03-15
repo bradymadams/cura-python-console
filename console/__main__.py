@@ -15,7 +15,7 @@ from PyQt5.QtGui import QGuiApplication
 app = QGuiApplication(sys.argv)
 
 from PyQt5.QtCore import QUrl
-from PyQt5.QtQml import QQmlApplicationEngine
+from PyQt5.QtQml import QQmlApplicationEngine, QQmlComponent, QQmlContext
 
 def run():
     directory = os.path.dirname(os.path.abspath(__file__))
@@ -24,8 +24,15 @@ def run():
 
     registerQmlTypes()
 
+    engine = QQmlApplicationEngine()
+    context = QQmlContext(engine)
+
     mainQml = QUrl.fromLocalFile(os.path.join(directory, 'Main.qml'))
-    engine = QQmlApplicationEngine(mainQml)
+
+    component = QQmlComponent(engine)
+    component.loadUrl(mainQml)
+
+    dialog = component.create(context)
 
     return app.exec_()
 

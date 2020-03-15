@@ -13,6 +13,8 @@ UM.Dialog {
     id: consoleDialog
     title: "Ultimaker Cura | Python Console"
 
+    property string _startupScript : startupScript
+
     modality: Qt.NonModal;
     flags: Qt.Window;
 
@@ -32,6 +34,8 @@ UM.Dialog {
         PythonConsole.Shell {
             anchors.fill: parent
             anchors.bottomMargin: closeButton.height + UM.Theme.getSize("default_margin").height
+
+            startupScript: consoleDialog._startupScript
         }
 
         Button {

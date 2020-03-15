@@ -26,6 +26,8 @@ ApplicationWindow {
         spacing: 10
 
         PythonConsole.Shell {
+            id: shell
+
             anchors.fill: parent
             anchors.bottomMargin: closeButton.height + 10
         }

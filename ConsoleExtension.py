@@ -21,6 +21,27 @@ class ConsoleExtension(Extension):
         self._about_dialog = None
         self.addMenuItem(i18n_catalog.i18nc("@item:inmenu", "About"), self._openAboutDialog)
 
+        self._preferenceOpenConsoleOnStartup = "python-console/open_console_on_startup"
+        self._preferenceStartupScript = "python-console/startup_script"
+
+        self._startup_script = ""
+
+    def applicationInitialized(self):
+        preferences = CuraApplication.getInstance().getPreferences()
+
+        open_console = preferences.getValue(self._preferenceOpenConsoleOnStartup)
+        startup_script = preferences.getValue(self._preferenceStartupScript)
+
+        if startup_script:
+            self._startup_script = startup_script
+
+        if isinstance(open_console, bool):
+            if open_console:
+                self._openConsoleDialog()
+        else:
+            if open_console == 'dialog':
+                self._openConsoleDialog()
+
     def _createQmlDialog(self, dialog_qml, vars = None):
         directory = PluginRegistry.getInstance().getPluginPath(self.getPluginId())
 
@@ -40,5 +61,8 @@ class ConsoleExtension(Extension):
 
     def _openConsoleDialog(self):
         if not self._console_window:
-            self._console_window = self._createQmlDialog("ConsoleDialog.qml")
+            self._console_window = self._createQmlDialog(
+                "ConsoleDialog.qml",
+                {"startupScript": self._startup_script}
+            )
         self._console_window.show()
