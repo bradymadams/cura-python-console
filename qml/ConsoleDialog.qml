@@ -1,17 +1,17 @@
 import QtQuick 2.7
-import QtQuick.Controls 1.1
-import QtQuick.Controls.Styles 1.1
-import QtQuick.Layouts 1.1
-import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.2
+import QtQuick.Controls 1.1
+import QtQuick.Layouts 1.1
 
 import UM 1.2 as UM
 
 import PythonConsole 1.0 as PythonConsole
 
-UM.Dialog {
+Window {
     id: consoleDialog
     title: "Ultimaker Cura | Python Console"
+
+    color: "#4a4a4a"
 
     property string _startupScript : startupScript
 

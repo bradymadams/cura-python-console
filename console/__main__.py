@@ -14,11 +14,16 @@ from PyQt5.QtGui import QGuiApplication
 
 app = QGuiApplication(sys.argv)
 
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, QSize
 from PyQt5.QtQml import QQmlApplicationEngine, QQmlComponent, QQmlContext
+from PyQt5.QtGui import QIcon
 
 def run():
     directory = os.path.dirname(os.path.abspath(__file__))
+
+    appIcon = QIcon()
+    appIcon.addFile(os.path.join(directory, "python.png"), QSize(64, 64))
+    app.setWindowIcon(appIcon)
 
     from . import registerQmlTypes
 
@@ -31,6 +36,10 @@ def run():
 
     component = QQmlComponent(engine)
     component.loadUrl(mainQml)
+
+    if component.isError():
+        for error in component.errors():
+            print('Error: ', error.toString())
 
     dialog = component.create(context)
 

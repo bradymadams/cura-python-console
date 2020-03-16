@@ -15,11 +15,12 @@ TextArea {
     }
 
     text: shell.text
-
     //textFormat: TextEdit.RichText
 
     style: TextAreaStyle {
         font.family: "Monospace"
+        backgroundColor: "#222222"
+        textColor: "#ebebeb"
     }
 
     Component.onCompleted: {

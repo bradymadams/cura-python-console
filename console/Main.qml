@@ -1,9 +1,7 @@
 import QtQuick 2.7
-import QtQuick.Controls 1.1
-import QtQuick.Controls.Styles 1.1
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.1
-import QtQuick.Dialogs 1.1
-import QtQuick.Window 2.2
 
 import PythonConsole 1.0 as PythonConsole
 
@@ -18,6 +16,12 @@ ApplicationWindow {
 
     minimumWidth: 320
     minimumHeight: 480
+
+    style: ApplicationWindowStyle {
+        background: Rectangle {
+            color: "#4a4a4a"
+        }
+    }
 
     ColumnLayout {
         anchors.fill: parent
