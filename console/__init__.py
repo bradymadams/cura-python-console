@@ -8,7 +8,7 @@ import io
 import threading
 
 from PyQt5.Qt import Qt
-from PyQt5.QtCore import pyqtProperty, pyqtSlot, QUrl, QObject
+from PyQt5.QtCore import pyqtProperty, pyqtSignal, pyqtSlot, QUrl, QObject
 from PyQt5.QtQml import qmlRegisterType
 
 class CodeLine:
@@ -139,15 +139,13 @@ class ShellInterface(QObject):
             Qt.Key_Return: self._runCode
         }
 
-    @pyqtProperty(str)
-    def text(self):
-        t = self._history.text(self._prompt)
-        t += self._currentLine.text(self._prompt)
-        return t
+    textChanged = pyqtSignal()
 
-    #@text.setter
-    #def text(self, t : str):
-    #    self._text = t
+    @pyqtProperty(str, notify=textChanged)
+    def text(self):
+        return \
+            self._history.text(self._prompt) + \
+            self._currentLine.text(self._prompt)
 
     @pyqtProperty(int)
     def cursorPosition(self):

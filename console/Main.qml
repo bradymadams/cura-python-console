@@ -32,8 +32,8 @@ ApplicationWindow {
         PythonConsole.Shell {
             id: shell
 
-            anchors.fill: parent
-            anchors.bottomMargin: closeButton.height + 10
+            Layout.fillWidth: true;
+            Layout.fillHeight: true;
         }
 
         Button {
