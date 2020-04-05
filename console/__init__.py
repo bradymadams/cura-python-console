@@ -289,6 +289,11 @@ class ShellInterface(QObject):
                 self._keyEnd()
 
     def _blockMove(self, key : int):
+        '''
+        Moves the cursor from it's current position until it reaches
+        whitespace or a special character in the direction specified
+        by key. key must be Qt.Key_Left or Qt.Key_Right.
+        '''
         code = self._currentLine.code
 
         if key == Qt.Key_Left:
@@ -302,11 +307,12 @@ class ShellInterface(QObject):
             limit = self._currentLine.length()
             inc = 1
 
-        new_pos = self._cursor
+        new_pos = self._cursor + inc
+        peek = min(0, inc)
 
         while new_pos != limit:
-            next_char = code[new_pos + min(0, inc)]
-            if next_char in (' ', '.', ':', '(', ')'):
+            next_char = code[new_pos + peek]
+            if next_char in (' ', '.', ':', '(', ')', '\'', '"'):
                 break
             new_pos += inc
 
