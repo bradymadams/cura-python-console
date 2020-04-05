@@ -178,15 +178,12 @@ class ShellInterface(QObject):
                 # Do nothing when Alt is held down
                 return True
 
-            if ctrl:
-                # Do nothing for now, but we need to check
-                # for arrows and certain characters (e.g. V)
-                # that we want to do stuff with
-                return True
-
-            if shift and ctrl:
-                # Do nothing when Ctrl + Shift held down
-                # TODO implement keyboard selection
+            if shift:
+                if key in (Qt.Key_Left, Qt.Key_Right):
+                    self._blockSelect(key, ctrl)
+            elif ctrl:
+                if key in (Qt.Key_Left, Qt.Key_Right):
+                    self._blockMove(key)
                 return True
 
         # Keys we pass on
@@ -195,7 +192,6 @@ class ShellInterface(QObject):
 
         if key in self._keyFunctions.keys():
             self._keyFunctions[key]()
-            return True
 
         if key in (Qt.Key_Backspace, Qt.Key_Delete):
             self._delCodeCharacter(key == Qt.Key_Backspace)
@@ -291,6 +287,36 @@ class ShellInterface(QObject):
             if line:
                 self._currentLine.code = line.code
                 self._keyEnd()
+
+    def _blockMove(self, key : int):
+        code = self._currentLine.code
+
+        if key == Qt.Key_Left:
+            if self._cursor == 0:
+                return
+            limit = 0
+            inc = -1
+        elif key == Qt.Key_Right:
+            if self._cursor >= self._currentLine.length():
+                return
+            limit = self._currentLine.length()
+            inc = 1
+
+        new_pos = self._cursor
+
+        while new_pos != limit:
+            next_char = code[new_pos + min(0, inc)]
+            if next_char in (' ', '.', ':', '(', ')'):
+                break
+            new_pos += inc
+
+        if new_pos == self._cursor:
+            new_pos += inc
+
+        self._cursor = new_pos
+
+    def _blockSelect(self, key : int, ctrl : bool):
+        pass
 
 def registerQmlTypes():
     directory = os.path.dirname(os.path.abspath(__file__))
