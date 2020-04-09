@@ -28,6 +28,8 @@ TextArea {
         if (!ran) {
             console.error("Failed to run startup script " + this.startupScript);
         }
+        focus = true;
+        cursorPosition = shell.adjustCursorPosition(0);
     }
 
     Keys.onPressed: {
