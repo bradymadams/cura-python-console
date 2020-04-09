@@ -324,6 +324,21 @@ class ShellInterface(QObject):
     def _blockSelect(self, key : int, ctrl : bool):
         pass
 
+    @pyqtSlot(int, result=int)
+    def adjustCursorPosition(self, clickedPosition : int):
+        line_start = self._history.length() + self._promptLength
+        line_end = line_start + self._currentLine.length()
+
+        if clickedPosition < line_start:
+            #self._cursor = 0
+            pass # leave cursor where it is
+        elif clickedPosition >= line_end:
+            self._cursor = self._currentLine.length()
+        else:
+            self._cursor = clickedPosition - line_start
+
+        return self.cursorPosition
+
 def registerQmlTypes():
     directory = os.path.dirname(os.path.abspath(__file__))
 

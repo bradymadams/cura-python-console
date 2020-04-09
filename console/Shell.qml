@@ -36,4 +36,21 @@ TextArea {
         text = shell.text
         cursorPosition = shell.cursorPosition
     }
+
+    function mouseClick(mouse) {
+        focus = true;
+        cursorPosition = shell.adjustCursorPosition(
+            positionAt(mouse.x, mouse.y)
+        );
+    }
+
+    MouseArea {
+        cursorShape: Qt.IBeamCursor;
+
+        anchors.fill: parent;
+
+        onClicked: {
+            consoleTextArea.mouseClick(mouse);
+        }
+    }
 }
