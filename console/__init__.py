@@ -288,22 +288,22 @@ class ShellInterface(QObject):
                 self._currentLine.code = line.code
                 self._keyEnd()
 
-    def _blockMove(self, key : int):
+    def _blockNext(self, key : int):
         '''
-        Moves the cursor from it's current position until it reaches
-        whitespace or a special character in the direction specified
-        by key. key must be Qt.Key_Left or Qt.Key_Right.
+        Returns the position from the current cursor position until
+        the search reaches whitespace or a special character in the
+        direction specified by key. key must be Qt.Key_Left or Qt.Key_Right.
         '''
         code = self._currentLine.code
 
         if key == Qt.Key_Left:
             if self._cursor == 0:
-                return
+                return self._cursor
             limit = 0
             inc = -1
         elif key == Qt.Key_Right:
             if self._cursor >= self._currentLine.length():
-                return
+                return self._cursor
             limit = self._currentLine.length()
             inc = 1
 
@@ -312,14 +312,17 @@ class ShellInterface(QObject):
 
         while new_pos != limit:
             next_char = code[new_pos + peek]
-            if next_char in (' ', '.', ':', '(', ')', '\'', '"'):
+            if next_char in (" ", ".", ":", "(", ")", "'", "\""):
                 break
             new_pos += inc
 
         if new_pos == self._cursor:
             new_pos += inc
 
-        self._cursor = new_pos
+        return new_pos
+
+    def _blockMove(self, key : int):
+        self._cursor = self._blockNext(key)
 
     def _blockSelect(self, key : int, ctrl : bool):
         pass

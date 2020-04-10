@@ -32,14 +32,14 @@ def run():
     engine = QQmlApplicationEngine()
     context = QQmlContext(engine)
 
-    mainQml = QUrl.fromLocalFile(os.path.join(directory, 'Main.qml'))
+    mainQml = QUrl.fromLocalFile(os.path.join(directory, "Main.qml"))
 
     component = QQmlComponent(engine)
     component.loadUrl(mainQml)
 
     if component.isError():
         for error in component.errors():
-            print('Error: ', error.toString())
+            print("Error: ", error.toString())
 
     dialog = component.create(context)
 

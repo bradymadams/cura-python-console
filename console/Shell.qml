@@ -40,6 +40,10 @@ TextArea {
     }
 
     function mouseClick(mouse) {
+        if (mouse.button != Qt.LeftButton) {
+            return;
+        }
+
         focus = true;
         cursorPosition = shell.adjustCursorPosition(
             positionAt(mouse.x, mouse.y)
@@ -47,11 +51,15 @@ TextArea {
     }
 
     MouseArea {
+        acceptedButtons: Qt.LeftButton | Qt.RightButton;
         cursorShape: Qt.IBeamCursor;
 
         anchors.fill: parent;
 
-        onClicked: {
+        onPressed: {
+        }
+
+        onReleased: {
             consoleTextArea.mouseClick(mouse);
         }
     }
